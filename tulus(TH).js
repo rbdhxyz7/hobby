@@ -1,38 +1,69 @@
 const lyrics = [
-  "Tak ada yang hilang dariku belakangan",
-  "Sedang tak mudah bertemu rasa senang",
-  "Sedang kucari yang jadi pencetusnya",
-  "Mungkin hilangnya atau siklus hidupku",
-  "Mungkin aku sedang tak bisa",
-  "Tak bisa jatuh cinta",
-  "Membuka hati tuk apapun siapapun",
-  "Dan mungkin aku memang sedang tak bisa",
-  "Tak bisa jatuh cinta",
-  "Membuka hati tuk apapun siapapun"
+  { text: "Tak ada yang hilang dariku belakangan", speed: 60, pause: 1400 },
+  { text: "Sedang tak mudah bertemu rasa senang", speed: 60, pause: 1400 },
+  { text: "Sedang kucari yang jadi pencetusnya", speed: 60, pause: 1400 },
+  { text: "Mungkin hilangnya atau siklus hidupku", speed: 70, pause: 1600 },
+  { text: "Mungkin aku sedang tak bisa", speed: 80, pause: 1500 },
+  { text: "Tak bisa jatuh cinta", speed: 90, pause: 1800 },
+  { text: "Membuka hati tuk apapun siapapun", speed: 50, pause: 1600 },
+  { text: "Dan mungkin aku memang sedang tak bisa", speed: 80, pause: 1500 },
+  { text: "Tak bisa jatuh cinta", speed: 90, pause: 1800 },
+  { text: "Membuka hati tuk apapun siapapun", speed: 50, pause: 2000 }
 ];
 
-// Fungsi delay dalam milidetik
+const emotes = ["🍃", "🍵", "🌱", "✨", "💚", "🌿", "🎶", "🌸"];
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Fungsi untuk mencetak teks tepat di tengah terminal
+function printCentered(text) {
+  const termWidth = process.stdout.columns || 80; // Lebar terminal
+  const textLength = text.length;
+  const padding = Math.max(0, Math.floor((termWidth - textLength) / 2));
+  return " ".repeat(padding) + text;
+}
+
+// Fungsi untuk memilih emote acak
+function getRandomEmote() {
+  return emotes[Math.floor(Math.random() * emotes.length)];
+}
+
 async function startLyrics() {
-  // Clear terminal di awal
   console.clear();
 
-  for (const line of lyrics) {
-    // Ketik per-huruf
-    for (const char of line) {
+  for (const item of lyrics) {
+    const topEmote = getRandomEmote();
+    const bottomEmote = getRandomEmote();
+
+    // 1. Tampilkan emote atas di tengah
+    console.log("\n\n"); // Jeda baris atas
+    console.log(printCentered(`~ ${topEmote} ~`));
+    console.log("\n");
+
+    // 2. Hitung spasi awal agar teks lirik berada di tengah saat diketik
+    const termWidth = process.stdout.columns || 80;
+    const padding = Math.max(0, Math.floor((termWidth - item.text.length) / 2));
+    process.stdout.write(" ".repeat(padding));
+
+    // 3. Ketik lirik per-huruf
+    for (const char of item.text) {
       process.stdout.write(char);
-      await sleep(50); // Kecepatan ketik (50ms per huruf)
+      await sleep(item.speed);
     }
 
-    // Tahan kalimat sejenak setelah selesai diketik
-    await sleep(1500);
+    // 4. Tampilkan emote bawah di tengah
+    console.log("\n\n");
+    console.log(printCentered(`~ ${bottomEmote} ~`));
 
-    // Hapus layar terminal sebelum kalimat berikutnya
+    // 5. Tahan kalimat sesuai durasi pause
+    await sleep(item.pause);
+
+    // 6. Bersihkan layar untuk kalimat berikutnya
     console.clear();
   }
 
-  console.log("thx ✨");
+  // Tampilan penutup di tengah
+  console.log("\n\n" + printCentered("✨ thx ✨") + "\n\n");
 }
 
 startLyrics();
